@@ -1,0 +1,42 @@
+version: "2"
+linters:
+  default: standard
+  enable:
+    - errcheck
+    - gocritic
+    - revive
+    - gosec
+    - nestif
+  settings:
+    nestif:
+      min-complexity: 15 # alur transaksi (hold/refund/squad) memang bersarang; 15 menandai yang benar-benar sulit dibaca
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: package-comments
+          disabled: true
+  exclusions:
+    rules:
+      # G115 (konversi int): seluruh kasus dibatasi — paginasi ≤100, parameter config divalidasi, langkah TOTP kecil.
+      - linters: [gosec]
+        text: "G115"
+      # G101 (kredensial terkode): nama konstanta kode error / fixture tes, bukan rahasia.
+      - linters: [gosec]
+        text: "G101"
+      # G404: acak non-keamanan untuk simulasi latihan antrean.
+      - linters: [gosec]
+        path: internal/service/readiness.go
+        text: "G404"
+      # G304: path dari konfigurasi operator (SEO_INDEX_HTML) / berkas migrasi tes — bukan input pengguna.
+      - linters: [gosec]
+        path: (internal/service/seo.go|internal/apitest/harness_test.go)
+        text: "G304"
+      # G124 pada helper tes (cookie palsu di klien tes).
+      - linters: [gosec]
+        path: internal/apitest/
+        text: "G124"
+      # G404 di tes: acak berbenih tetap untuk simulasi yang dapat diulang.
+      - linters: [gosec]
+        path: internal/apitest/
+        text: "G404"

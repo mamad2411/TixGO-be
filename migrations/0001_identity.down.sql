@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS organizer_members;
+DROP TABLE IF EXISTS organizers;
+DROP TABLE IF EXISTS social_identities;
+DROP TABLE IF EXISTS mfa_recovery_codes;
+DROP TABLE IF EXISTS mfa_totp;
+DROP TABLE IF EXISTS email_tokens;
+DROP TABLE IF EXISTS password_history;
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS users;

@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+bin/
+*.test
+*.out
+coverage.*
+.DS_Store
+
+# symlink skill ke ../skills (tidak ikut repo ini)
+.claude/
+tmp/

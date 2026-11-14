@@ -1,0 +1,5 @@
+# Lint kontrak: dijalankan dari frontend (`pnpm api:lint`). Dev memakai localhost, jadi aturan server-localhost dimatikan.
+extends:
+  - recommended
+rules:
+  no-server-example.com: off

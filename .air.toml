@@ -1,0 +1,17 @@
+# Hot reload dev (docs/21-TOOLING.md). Jalankan: `air` dari folder backend (butuh .env ter-load: make dev-be-watch).
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/api ./cmd/api"
+  bin = "./tmp/api"
+  include_ext = ["go", "sql"]
+  exclude_dir = ["tmp", "bin", "vendor", ".github", "docs"]
+  delay = 500
+  stop_on_error = true
+
+[log]
+  time = false
+
+[misc]
+  clean_on_exit = true

@@ -1,0 +1,18 @@
+# Git hooks (docs/21-TOOLING.md). Pasang: `lefthook install`. Lewati sekali: LEFTHOOK=0 git commit ...
+pre-commit:
+  parallel: true
+  commands:
+    gofmt:
+      glob: "*.go"
+      run: |
+        out=$(gofmt -l {staged_files})
+        if [ -n "$out" ]; then echo "gofmt belum rapi, jalankan gofmt -w pada:"; echo "$out"; exit 1; fi
+    vet:
+      glob: "*.go"
+      run: go vet ./...
+pre-push:
+  commands:
+    lint:
+      run: golangci-lint run
+    test:
+      run: go test ./...

@@ -1,0 +1,1 @@
+ALTER TABLE venues DROP COLUMN IF EXISTS image_credit, DROP COLUMN IF EXISTS image_source;

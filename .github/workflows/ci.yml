@@ -1,0 +1,40 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: tixgo, POSTGRES_PASSWORD: tixgo, POSTGRES_DB: tixgo }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tixgo" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - run: go build ./...
+      - run: go vet ./... && go vet -tags tools ./...
+      - uses: golangci/golangci-lint-action@v8
+        with: { version: v2.15 }
+      - run: go test -race ./...
+        env:
+          DATABASE_URL: postgres://tixgo:tixgo@localhost:5432/tixgo?sslmode=disable
+          REDIS_ADDR: localhost:6379
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t tixgo-backend:ci .
