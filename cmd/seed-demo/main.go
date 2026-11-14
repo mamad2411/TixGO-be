@@ -13,9 +13,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -162,11 +162,11 @@ func run() error {
 		if a, ok := assets[kind+":"+key]; ok {
 			return a, nil
 		}
-		f, err := os.Open(filepath.Join(*dir, key+".jpg"))
+		f, err := openIn(*dir, key+".jpg")
 		if err != nil {
 			return "", err
 		}
-		defer f.Close()
+		defer func() { _ = f.Close() }() // berkas foto read-only; galat tutup tidak berarti
 		v, err := b.Svc.Media.Upload(ctx, principal, kind, f)
 		if err != nil {
 			return "", fmt.Errorf("unggah %s: %w", key, err)
@@ -288,7 +288,12 @@ func backfillVenuePhotos(ctx context.Context, b *app.Built, dir string) error {
 	if err := pool.QueryRow(ctx, `SELECT id FROM users WHERE email='admin@tixgo.local'`).Scan(&adminID); err != nil {
 		return fmt.Errorf("jalankan cmd/seed dulu: %w", err)
 	}
-	raw, err := os.ReadFile(filepath.Join(dir, "meta.json"))
+	mf, err := openIn(dir, "meta.json")
+	if err != nil {
+		return err
+	}
+	raw, err := io.ReadAll(mf)
+	_ = mf.Close()
 	if err != nil {
 		return err
 	}
@@ -299,7 +304,7 @@ func backfillVenuePhotos(ctx context.Context, b *app.Built, dir string) error {
 	p := &auth.Principal{UserID: adminID, Role: "admin"}
 	assetOf := map[string]string{}
 	for name, key := range venueKey {
-		f, err := os.Open(filepath.Join(dir, key+".jpg"))
+		f, err := openIn(dir, key+".jpg")
 		if err != nil {
 			tag, err2 := pool.Exec(ctx, `UPDATE venues SET image_key=NULL, image_credit=NULL, image_source=NULL WHERE name=$1`, name)
 			if err2 != nil {
@@ -331,4 +336,14 @@ func backfillVenuePhotos(ctx context.Context, b *app.Built, dir string) error {
 		fmt.Printf("seed-demo: %s -> %s (%d baris)\n", name, creditOf(m), tag.RowsAffected())
 	}
 	return nil
+}
+
+// openIn membuka berkas HANYA di dalam folder dir (os.Root menolak ../ dan symlink keluar folder).
+func openIn(dir, name string) (*os.File, error) {
+	root, err := os.OpenRoot(dir)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = root.Close() }()
+	return root.Open(name)
 }

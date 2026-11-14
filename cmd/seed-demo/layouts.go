@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"math/rand"
 
 	"github.com/jackc/pgx/v5"
 
@@ -140,7 +139,7 @@ func seedLayouts(ctx context.Context, b *app.Built) error {
 			}
 			rows.Close()
 
-			rng := rand.New(rand.NewSource(int64(len(l.slug)) * 7919))
+			rng := newDetRand(uint64(len(l.slug)) * 7919)
 			var data [][]any
 			for si, a := range l.arcs {
 				sec := id.New()
@@ -219,4 +218,19 @@ func seedPromos(ctx context.Context, b *app.Built) error {
 		}
 	}
 	return nil
+}
+
+// detRand: pembangkit deterministik kecil (splitmix64) agar denah demo selalu sama untuk slug yang sama.
+// Sengaja bukan math/rand: ini data tampilan, bukan kebutuhan keamanan, dan hasilnya harus dapat diulang.
+type detRand struct{ s uint64 }
+
+func newDetRand(seed uint64) *detRand { return &detRand{s: seed} }
+
+func (r *detRand) Float64() float64 {
+	r.s += 0x9e3779b97f4a7c15
+	z := r.s
+	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9
+	z = (z ^ (z >> 27)) * 0x94d049bb133111eb
+	z ^= z >> 31
+	return float64(z>>11) / float64(1<<53)
 }
