@@ -5,7 +5,7 @@ Rincian lengkap & bukti: `../../docs/21-TOOLING.md`. Ringkas untuk repo ini:
 | Kebutuhan | Perintah (dari root `tixGo/`) | Catatan |
 |---|---|---|
 | Hot reload | `make dev-be-watch` | `.air.toml` |
-| Lint + vet + test | `make preflight` | golangci-lint 2.15 (2.13.x tidak kompatibel dengan Go 1.27.3); 0 temuan |
+| Lint + vet + test | `make preflight` | golangci-lint 2.15 (2.13.x tidak kompatibel dengan Go 1.27.x); 0 temuan |
 | Scan kerentanan | `make vuln` | govulncheck: 0 terpanggil. Satu temuan modul `x/crypto/openpgp` (GO-2026-5932, tanpa perbaikan) tidak diimpor kode kita |
 | Seed demo | `make seed` / `go run ./cmd/seed -load 2000` | dilarang di production; `-load` membuat pengguna uji beban |
 | Uji beban smoke | `make load-smoke` | `scripts/k6/smoke.js` |

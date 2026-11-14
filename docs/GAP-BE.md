@@ -6,7 +6,7 @@ Hasil audit kelengkapan backend: dokumen (catatan MD, struktur, workflow, alur f
 ## Stack backend (terverifikasi dari `go.mod`, `Dockerfile`, `docker-compose.dev.yml`)
 | Lapisan | Pilihan | Versi |
 |---|---|---|
-| Bahasa | Go | 1.27.3 (dinaikkan dari 1.27.0 karena kerentanan stdlib) |
+| Bahasa | Go | 1.27.4 (dinaikkan dari 1.27.3 karena GO-2026-6859 di net/http) |
 | HTTP | Gin | v1.12.0 |
 | Database | PostgreSQL (driver `pgx/v5` v5.11.0, query via **sqlc**, migrasi **golang-migrate**) | image `postgres:17-alpine` |
 | Cache / antrean / bus | Redis (`go-redis/v9` v9.22.0, `redis_rate` GCRA) | image `redis:7-alpine` |

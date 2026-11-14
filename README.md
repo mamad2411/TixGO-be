@@ -4,7 +4,7 @@ Go + Gin. Repo ini TERPISAH dari `../frontend`; kontrak hanya `api/openapi.yaml`
 Dokumen: `../docs/` (mulai `00-INDEX.md`). Status: **fitur M1–M48 sudah ada di level API dan teruji** (lihat `../docs/references/STATUS-BE.md`; yang belum + risiko jujur di sana). Frontend belum.
 
 ## Versi (terverifikasi 2026-10-04)
-Go 1.27.3 · gin v1.12.x · pgx/v5 v5.11.0 · go-redis/v9 · prometheus client_golang · golang-migrate v4.20.1 · sqlc v1.31.1 · golangci-lint 2.13.2
+Go 1.27.4 · gin v1.12.x · pgx/v5 v5.11.0 · go-redis/v9 · prometheus client_golang · golang-migrate v4.20.1 · sqlc v1.31.1 · golangci-lint 2.15
 (versi persis: `go.mod`)
 
 ## Jalankan
